@@ -1,0 +1,11 @@
+DATOS DE LA ENTREGA - INVENTARIO SENA
+
+Enlace local: http://localhost/inventario_sena/index.php
+
+Base de Datos: inventario
+
+Tabla: productos
+
+Puerto MySQL: 3306
+
+Instrucciones: Primero encender Apache y MySQL en XAMPP, luego abrir el enlace en el navegador.
