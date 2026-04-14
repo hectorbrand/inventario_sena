@@ -1,9 +1,25 @@
 <?php
-include("conexion.php");
+// =============================================================================
+// Evidencia: GA7-220501096-AA3-EV01
+// Descripción: Lógica para borrar registros mediante el ID.
+// =============================================================================
 
-$id = $_GET['id'];
+require_once 'conexion.php';
 
-mysqli_query($conexion, "DELETE FROM productos WHERE id=$id");
+// Validamos que el ID exista en la URL
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
 
-header("Location: listar.php");
+    try {
+        $sql = "DELETE FROM productos WHERE id = :id";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':id', $id);
+
+        if ($stmt->execute()) {
+            header("Location: listar.php");
+        }
+    } catch (PDOException $e) {
+        echo "Error al eliminar: " . $e->getMessage();
+    }
+}
 ?>
