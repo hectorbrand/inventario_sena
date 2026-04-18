@@ -1,34 +1,32 @@
 <?php
 // =============================================================================
 // Evidencia: GA7-220501096-AA3-EV01
-// Descripción: Lógica para insertar productos en la base de datos.
+// Descripción: Lógica para insertar productos.
 // =============================================================================
 
-require_once 'conexion.php'; // Reutilizamos la conexión PDO
+require_once 'conexion.php'; 
 
-// Verificamos que los datos lleguen por el método POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre = $_POST['nombre'];
     $cantidad = $_POST['cantidad'];
     $precio = $_POST['precio'];
 
     try {
-        // Preparamos la consulta SQL con marcadores para evitar inyección SQL
         $sql = "INSERT INTO productos (nombre, cantidad, precio) VALUES (:nom, :cant, :prec)";
+        
+        // Usamos $conexion porque así la llamamos en el paso anterior
         $stmt = $conexion->prepare($sql);
         
-        // Vinculamos los parámetros
         $stmt->bindParam(':nom', $nombre);
         $stmt->bindParam(':cant', $cantidad);
         $stmt->bindParam(':prec', $precio);
 
-        // Ejecutamos la inserción
         if ($stmt->execute()) {
-            // Si funciona, regresamos a la lista para ver el cambio
             header("Location: listar.php");
+            exit();
         }
     } catch (PDOException $e) {
-        echo "Error al guardar el producto: " . $e->getMessage();
+        echo "Error al guardar: " . $e->getMessage();
     }
 }
 ?>
