@@ -1,22 +1,16 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 
+/**
+ * Componente principal - Control Job
+ * Proyecto para la Secretaría de Salud
+ */
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Control Job - Sistema de Inventario</h1>
+        <p>Estructura de frontend lista para la Secretaría de Salud.</p>
       </header>
     </div>
   );
