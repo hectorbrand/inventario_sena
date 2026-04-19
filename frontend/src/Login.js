@@ -1,28 +1,72 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+// Importamos useNavigate para una navegación más fluida
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+  const [usuario, setUsuario] = useState('');
+  const [clave, setClave] = useState('');
+  const navigate = useNavigate(); // Creamos la función para saltar de página
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    if (usuario === "" || clave === "") {
+      alert("Por favor, llena todos los campos");
+      return;
+    }
+
+    axios.post('http://localhost:8081/login', { 
+      usuarioIngresado: usuario, 
+      claveIngresada: clave 
+    })
+    .then(res => {
+      if (res.data.success) {
+        alert("✅ ¡Ingreso exitoso! Bienvenido administrador.");
+        // --- AQUÍ ESTÁ EL CAMBIO: Salto automático al Dashboard ---
+        navigate('/dashboard'); 
+      } else {
+        alert("❌ Error: Usuario o contraseña incorrectos.");
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      alert("❌ No se pudo conectar con el servidor. ¿Encendiste el backend?");
+    });
+  };
+
   return (
     <div style={styles.contenedorPrincipal}>
       <div style={styles.cuadroLogin}>
         
-        {/* Encabezado con fondo gris claro */}
+        {/* Encabezado */}
         <div style={styles.encabezado}>
           <h1 style={styles.titulo}>Control Job</h1>
         </div>
 
-        {/* Formulario con etiquetas y campos */}
-        <form style={styles.formulario}>
+        {/* Formulario */}
+        <form style={styles.formulario} onSubmit={handleLogin}>
           <div style={styles.grupoCampo}>
             <label style={styles.etiqueta}>Usuario</label>
-            <input type="text" style={styles.input} />
+            <input 
+              type="text" 
+              style={styles.input} 
+              placeholder="Ej: admin"
+              onChange={e => setUsuario(e.target.value)} 
+            />
           </div>
 
           <div style={styles.grupoCampo}>
             <label style={styles.etiqueta}>Contraseña</label>
-            <input type="password" style={styles.input} />
+            <input 
+              type="password" 
+              style={styles.input} 
+              placeholder="Ej: 123"
+              onChange={e => setClave(e.target.value)} 
+            />
           </div>
 
-          <button type="button" style={styles.botonIngresar}>
+          <button type="submit" style={styles.botonIngresar}>
             Ingresar
           </button>
         </form>
