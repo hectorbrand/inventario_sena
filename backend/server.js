@@ -28,7 +28,7 @@ app.post('/login', (req, res) => {
     const { usuarioIngresado, claveIngresada } = req.body;
     
     // ✅ CORREGIDO: Se cambió 'usuario' por 'usuarios' (en plural)
-    const sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND clave = ?";
+    const sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND password = ?";
     
     db.query(sql, [usuarioIngresado, claveIngresada], (err, result) => {
         if (err) {
