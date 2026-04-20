@@ -55,10 +55,9 @@ app.get('/productos', (req, res) => {
     });
 });
 
-// --- NUEVA RUTA: GUARDAR UN PRODUCTO NUEVO EN MYSQL ---
+// --- RUTA: GUARDAR UN PRODUCTO NUEVO EN MYSQL ---
 app.post('/crear', (req, res) => {
     const sql = "INSERT INTO productos (nombre, cantidad, precio) VALUES (?)";
-    // Preparamos los valores que vienen desde el frontend
     const values = [
         req.body.nombre,
         req.body.cantidad,
@@ -71,6 +70,46 @@ app.post('/crear', (req, res) => {
             return res.status(500).json(err);
         }
         return res.json({ success: true, message: "Producto guardado correctamente" });
+    });
+});
+
+// --- RUTA ACTUALIZADA: ENTREGAR (RESTAR CANTIDAD VARIABLE) ---
+app.put('/entregar/:id', (req, res) => {
+    const id = req.params.id;
+    const cantidadARestar = req.body.cantidadARestar; // Recibimos el número desde el Dashboard
+
+    console.log(`Procesando entrega: ID ${id}, Cantidad a restar: ${cantidadARestar}`);
+
+    // La consulta resta el valor exacto enviado y asegura que no baje de 0
+    const sql = "UPDATE productos SET cantidad = cantidad - ? WHERE id = ? AND cantidad >= ?";
+    
+    db.query(sql, [cantidadARestar, id, cantidadARestar], (err, result) => {
+        if (err) {
+            console.error("❌ Error al actualizar cantidad en MySQL:", err);
+            return res.status(500).json(err);
+        }
+        
+        if (result.affectedRows === 0) {
+            console.log("⚠️ No se actualizó nada. Saldo insuficiente o ID no encontrado.");
+            return res.json({ success: false, message: "No se pudo actualizar" });
+        } else {
+            console.log("✅ Stock actualizado correctamente en la base de datos.");
+            return res.json({ success: true, message: "Cantidad actualizada" });
+        }
+    });
+});
+
+// --- NUEVA RUTA: ELIMINAR PRODUCTO ---
+app.delete('/eliminar/:id', (req, res) => {
+    const id = req.params.id;
+    const sql = "DELETE FROM productos WHERE id = ?";
+    
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error("❌ Error al eliminar producto:", err);
+            return res.status(500).json(err);
+        }
+        return res.json({ success: true, message: "Producto eliminado correctamente" });
     });
 });
 

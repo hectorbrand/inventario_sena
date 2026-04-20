@@ -19,17 +19,15 @@ function Dashboard() {
         cargarProductos();
     }, []);
 
-    // 2. FUNCIÓN NUEVA: Guarda el producto en la base de datos real
+    // 2. Función para Guardar nuevo producto
     const guardarProducto = (e) => {
         e.preventDefault();
         
-        // Validación básica
         if (!nombre || !cantidad || !precio) {
             alert("Por favor completa todos los campos");
             return;
         }
 
-        // Enviamos los datos al backend (server.js)
         axios.post('http://localhost:8081/crear', { 
             nombre: nombre, 
             cantidad: cantidad, 
@@ -38,8 +36,7 @@ function Dashboard() {
         .then(res => {
             if (res.data.success) {
                 alert(`✅ ${nombre} guardado correctamente en MySQL`);
-                cargarProductos(); // Esto hace que aparezca en la tabla de abajo al instante
-                // Limpiamos los cuadros de texto
+                cargarProductos(); 
                 setNombre('');
                 setCantidad('');
                 setPrecio('');
@@ -47,8 +44,53 @@ function Dashboard() {
         })
         .catch(err => {
             console.error("Error al guardar:", err);
-            alert("❌ No se pudo guardar el producto. Revisa la terminal del backend.");
+            alert("❌ No se pudo guardar el producto.");
         });
+    };
+
+    // --- FUNCIÓN ACTUALIZADA: ENTREGAR CANTIDAD VARIABLE ---
+    const entregarProducto = (id, cantidadActual, nombreProducto) => {
+        // Pedimos al usuario la cantidad a entregar
+        const inputCantidad = window.prompt(`¿Cuántas unidades de "${nombreProducto}" vas a entregar? (Disponibles: ${cantidadActual})`);
+
+        // Si el usuario cancela o deja vacío, no hacemos nada
+        if (inputCantidad === null || inputCantidad === "") return;
+
+        const cantidadARestar = parseInt(inputCantidad);
+
+        // Validaciones básicas antes de enviar al servidor
+        if (isNaN(cantidadARestar) || cantidadARestar <= 0) {
+            alert("❌ Por favor, ingresa un número válido mayor a 0.");
+            return;
+        }
+
+        if (cantidadARestar > cantidadActual) {
+            alert(`❌ No puedes entregar ${cantidadARestar} unidades. Solo hay ${cantidadActual} disponibles.`);
+            return;
+        }
+
+        // Enviamos la petición al servidor con la cantidad específica
+        axios.put(`http://localhost:8081/entregar/${id}`, { cantidadARestar: cantidadARestar })
+            .then(res => {
+                if (res.data.success) {
+                    cargarProductos(); // Refresca la tabla
+                }
+            })
+            .catch(err => console.log("Error al entregar:", err));
+    };
+
+    // --- NUEVA FUNCIÓN: ELIMINAR ---
+    const eliminarProducto = (id) => {
+        if (window.confirm("¿Estás seguro de eliminar este producto de forma permanente?")) {
+            axios.delete(`http://localhost:8081/eliminar/${id}`)
+                .then(res => {
+                    if (res.data.success) {
+                        alert("🗑️ Producto eliminado correctamente");
+                        cargarProductos();
+                    }
+                })
+                .catch(err => console.log("Error al eliminar:", err));
+        }
     };
 
     return (
@@ -117,8 +159,19 @@ function Dashboard() {
                                 <td style={styles.celda}>{p.cantidad}</td>
                                 <td style={styles.celda}>${p.precio}</td>
                                 <td style={styles.celda}>
-                                    <button style={styles.botonEntregar}>Entregar</button>
-                                    <button style={styles.botonEliminar}>Eliminar</button>
+                                    {/* Botón Entregar actualizado para pedir cantidad */}
+                                    <button 
+                                        style={styles.botonEntregar} 
+                                        onClick={() => entregarProducto(p.id, p.cantidad, p.nombre)}
+                                    >
+                                        Entregar
+                                    </button>
+                                    <button 
+                                        style={styles.botonEliminar} 
+                                        onClick={() => eliminarProducto(p.id)}
+                                    >
+                                        Eliminar
+                                    </button>
                                 </td>
                             </tr>
                         ))}
