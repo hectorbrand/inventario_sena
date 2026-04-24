@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-// Importamos useNavigate para una navegación más fluida
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [usuario, setUsuario] = useState('');
   const [clave, setClave] = useState('');
-  const navigate = useNavigate(); // Creamos la función para saltar de página
+  const navigate = useNavigate();
 
+  // --- FUNCIÓN 1: INICIO DE SESIÓN (LOGIN) ---
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -22,16 +22,42 @@ function Login() {
     })
     .then(res => {
       if (res.data.success) {
-        alert("✅ ¡Ingreso exitoso! Bienvenido administrador.");
-        // --- AQUÍ ESTÁ EL CAMBIO: Salto automático al Dashboard ---
+        // MENSAJE REQUERIDO POR EL SENA
+        alert("✅ " + res.data.message); 
         navigate('/dashboard'); 
       } else {
-        alert("❌ Error: Usuario o contraseña incorrectos.");
+        // MENSAJE DE ERROR REQUERIDO POR EL SENA
+        alert("❌ " + res.data.message);
       }
     })
     .catch(err => {
       console.log(err);
-      alert("❌ No se pudo conectar con el servidor. ¿Encendiste el backend?");
+      alert("❌ No se pudo conectar con el servidor.");
+    });
+  };
+
+  // --- FUNCIÓN 2: REGISTRO DE USUARIO NUEVO ---
+  const handleRegistro = () => {
+    if (usuario === "" || clave === "") {
+      alert("Para registrarte, escribe un usuario y contraseña en los cuadros.");
+      return;
+    }
+
+    axios.post('http://localhost:8081/registro', { 
+      nuevoUsuario: usuario, 
+      nuevaClave: clave,
+      rol: 'usuario' // Por defecto lo creamos como rol usuario
+    })
+    .then(res => {
+      if (res.data.success) {
+        alert("✅ " + res.data.message); // "Usuario registrado con éxito"
+      } else {
+        alert("❌ Error al registrar.");
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      alert("❌ Error de conexión al intentar registrar.");
     });
   };
 
@@ -39,12 +65,10 @@ function Login() {
     <div style={styles.contenedorPrincipal}>
       <div style={styles.cuadroLogin}>
         
-        {/* Encabezado */}
         <div style={styles.encabezado}>
           <h1 style={styles.titulo}>Control Job</h1>
         </div>
 
-        {/* Formulario */}
         <form style={styles.formulario} onSubmit={handleLogin}>
           <div style={styles.grupoCampo}>
             <label style={styles.etiqueta}>Usuario</label>
@@ -68,6 +92,15 @@ function Login() {
 
           <button type="submit" style={styles.botonIngresar}>
             Ingresar
+          </button>
+
+          {/* BOTÓN NUEVO PARA REGISTRO */}
+          <button 
+            type="button" 
+            onClick={handleRegistro} 
+            style={styles.botonRegistrar}
+          >
+            Registrarse
           </button>
         </form>
       </div>
@@ -134,6 +167,16 @@ const styles = {
     fontSize: '16px',
     cursor: 'pointer',
     marginTop: '10px'
+  },
+  // ESTILO PARA EL NUEVO BOTÓN
+  botonRegistrar: {
+    backgroundColor: '#28a745', // Color verde
+    color: 'white',
+    padding: '12px',
+    borderRadius: '6px',
+    border: 'none',
+    fontSize: '16px',
+    cursor: 'pointer'
   }
 };
 
