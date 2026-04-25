@@ -1,70 +1,33 @@
-# Getting Started with Create React App
+# Control Job - Sistema de Gestión de Inventario 🏗️
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto es una aplicación Full Stack diseñada para el control de inventario y registro de entregas de herramientas y materiales. Permite gestionar el stock en tiempo real y mantener un historial detallado de quién recibe cada producto.
 
-## Available Scripts
+## 🚀 Tecnologías Utilizadas
 
-In the project directory, you can run:
+* **Frontend:** React.js, React Router, Axios. ⚛️
+* **Backend:** Node.js, Express.js. 🟢
+* **Base de Datos:** MySQL (XAMPP). 🗄️
+* **Versionamiento:** Git / GitHub. 🐙
 
-### `npm start`
+## 🛠️ Instalación y Uso
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Clona el repositorio.
+2. En la carpeta `backend`, ejecuta `npm install` y luego `node server.js`.
+3. En la carpeta `frontend`, ejecuta `npm install` y luego `npm start`.
+4. Asegúrate de tener XAMPP corriendo con el módulo de MySQL activo.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📖 Documentación de la API (Servicios Web)
 
-### `npm test`
+A continuación se detallan los servicios desarrollados para el cumplimiento de la evidencia GA7-220501096-AA5-EV03:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Servicio | Método | Ruta | Descripción | Datos Recibidos (JSON) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Autenticación** | `POST` | `/login` | Valida credenciales de usuario. | `usuario`, `password` |
+| **Listar Inventario** | `GET` | `/productos` | Obtiene todos los productos disponibles. | Ninguno |
+| **Crear Producto** | `POST` | `/crear` | Registra un nuevo artículo en la base de datos. | `nombre`, `cantidad`, `precio` |
+| **Registrar Entrega** | `PUT` | `/entregar/:id` | Resta stock y guarda registro en el historial. | `cantidadARestar`, `persona_recibe`, `area` |
+| **Ver Historial** | `GET` | `/historial` | Obtiene el reporte de todas las entregas realizadas. | Ninguno |
+| **Eliminar** | `DELETE`| `/eliminar/:id`| Elimina un producto del inventario. | ID por URL |
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 👤 Autor
+Héctor - Aprendiz SENA
