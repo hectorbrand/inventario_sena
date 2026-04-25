@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // 1. Importamos el hook para navegar
 
 function Dashboard() {
     const [productos, setProductos] = useState([]);
-    // Estados para capturar lo que escribes en el formulario
     const [nombre, setNombre] = useState('');
     const [cantidad, setCantidad] = useState('');
     const [precio, setPrecio] = useState('');
+    const navigate = useNavigate(); // 2. Inicializamos la función de navegación
 
-    // 1. Función para cargar los productos reales desde MySQL
+    // 1. Cargar productos desde MySQL
     const cargarProductos = () => {
         axios.get('http://localhost:8081/productos')
             .then(res => setProductos(res.data))
@@ -19,10 +20,9 @@ function Dashboard() {
         cargarProductos();
     }, []);
 
-    // 2. Función para Guardar nuevo producto
+    // 2. Guardar nuevo producto
     const guardarProducto = (e) => {
         e.preventDefault();
-        
         if (!nombre || !cantidad || !precio) {
             alert("Por favor completa todos los campos");
             return;
@@ -35,57 +35,61 @@ function Dashboard() {
         })
         .then(res => {
             if (res.data.success) {
-                alert(`✅ ${nombre} guardado correctamente en MySQL`);
+                alert(`✅ ${nombre} guardado correctamente`);
                 cargarProductos(); 
-                setNombre('');
-                setCantidad('');
-                setPrecio('');
+                setNombre(''); setCantidad(''); setPrecio('');
             }
         })
-        .catch(err => {
-            console.error("Error al guardar:", err);
-            alert("❌ No se pudo guardar el producto.");
-        });
+        .catch(err => alert("❌ No se pudo guardar el producto."));
     };
 
-    // --- FUNCIÓN ACTUALIZADA: ENTREGAR CANTIDAD VARIABLE ---
+    // 3. ENTREGAR PRODUCTO (Actualizado con Persona y Área) 📉📝
     const entregarProducto = (id, cantidadActual, nombreProducto) => {
-        // Pedimos al usuario la cantidad a entregar
         const inputCantidad = window.prompt(`¿Cuántas unidades de "${nombreProducto}" vas a entregar? (Disponibles: ${cantidadActual})`);
-
-        // Si el usuario cancela o deja vacío, no hacemos nada
         if (inputCantidad === null || inputCantidad === "") return;
-
+        
         const cantidadARestar = parseInt(inputCantidad);
-
-        // Validaciones básicas antes de enviar al servidor
-        if (isNaN(cantidadARestar) || cantidadARestar <= 0) {
-            alert("❌ Por favor, ingresa un número válido mayor a 0.");
+        if (isNaN(cantidadARestar) || cantidadARestar <= 0 || cantidadARestar > cantidadActual) {
+            alert("❌ Cantidad no válida o insuficiente.");
             return;
         }
 
-        if (cantidadARestar > cantidadActual) {
-            alert(`❌ No puedes entregar ${cantidadARestar} unidades. Solo hay ${cantidadActual} disponibles.`);
+        const persona = window.prompt("¿Nombre de la persona que recibe?");
+        if (!persona) {
+            alert("❌ El nombre es obligatorio para el registro.");
             return;
         }
 
-        // Enviamos la petición al servidor con la cantidad específica
-        axios.put(`http://localhost:8081/entregar/${id}`, { cantidadARestar: cantidadARestar })
-            .then(res => {
-                if (res.data.success) {
-                    cargarProductos(); // Refresca la tabla
-                }
-            })
-            .catch(err => console.log("Error al entregar:", err));
+        const area = window.prompt("¿Área de destino?");
+        if (!area) {
+            alert("❌ El área es obligatoria para el registro.");
+            return;
+        }
+
+        axios.put(`http://localhost:8081/entregar/${id}`, { 
+            cantidadARestar: cantidadARestar,
+            persona_recibe: persona,
+            area: area,
+            nombre_producto: nombreProducto 
+        })
+        .then(res => {
+            if (res.data.success) {
+                alert(`✅ Entrega registrada: ${cantidadARestar} unidades a ${persona}.`);
+                cargarProductos();
+            } else {
+                alert("❌ Error: " + res.data.message);
+            }
+        })
+        .catch(err => console.log("Error en entrega:", err));
     };
 
-    // --- NUEVA FUNCIÓN: ELIMINAR ---
+    // 4. Eliminar producto
     const eliminarProducto = (id) => {
-        if (window.confirm("¿Estás seguro de eliminar este producto de forma permanente?")) {
+        if (window.confirm("¿Estás seguro de eliminar este producto?")) {
             axios.delete(`http://localhost:8081/eliminar/${id}`)
                 .then(res => {
                     if (res.data.success) {
-                        alert("🗑️ Producto eliminado correctamente");
+                        alert("🗑️ Producto eliminado");
                         cargarProductos();
                     }
                 })
@@ -97,48 +101,43 @@ function Dashboard() {
         <div style={styles.contenedor}>
             <header style={styles.header}>
                 <h1 style={styles.titulo}>Sistema Control Job - Inventario</h1>
-                <button style={styles.botonSalir} onClick={() => window.location.href = '/'}>Cerrar Sesión</button>
+                
+                {/* --- 3. CONTENEDOR DE BOTONES A LA DERECHA --- */}
+                <div style={styles.contenedorBotones}>
+                    <button 
+                        style={styles.botonHistorial} 
+                        onClick={() => navigate('/historial')}
+                    >
+                        📋 Ver Historial
+                    </button>
+                    <button 
+                        style={styles.botonSalir} 
+                        onClick={() => navigate('/')}
+                    >
+                        Cerrar Sesión
+                    </button>
+                </div>
             </header>
 
-            {/* SECCIÓN 1: REGISTRO DE PRODUCTOS */}
             <section style={styles.seccionFormulario}>
                 <h2 style={styles.subtitulo}>Registro de productos</h2>
                 <form style={styles.formulario} onSubmit={guardarProducto}>
                     <div style={styles.grupoInput}>
                         <label style={styles.etiqueta}>Nombre del producto</label>
-                        <input 
-                            type="text" 
-                            style={styles.input} 
-                            placeholder="Ej: Guantes" 
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                        />
+                        <input type="text" style={styles.input} value={nombre} onChange={(e) => setNombre(e.target.value)} />
                     </div>
                     <div style={styles.grupoInput}>
                         <label style={styles.etiqueta}>Cantidad</label>
-                        <input 
-                            type="number" 
-                            style={styles.input} 
-                            placeholder="Ej: 100" 
-                            value={cantidad}
-                            onChange={(e) => setCantidad(e.target.value)}
-                        />
+                        <input type="number" style={styles.input} value={cantidad} onChange={(e) => setCantidad(e.target.value)} />
                     </div>
                     <div style={styles.grupoInput}>
                         <label style={styles.etiqueta}>Precio Unitario</label>
-                        <input 
-                            type="number" 
-                            style={styles.input} 
-                            placeholder="Ej: 500" 
-                            value={precio}
-                            onChange={(e) => setPrecio(e.target.value)}
-                        />
+                        <input type="number" style={styles.input} value={precio} onChange={(e) => setPrecio(e.target.value)} />
                     </div>
                     <button type="submit" style={styles.botonGuardar}>Guardar Producto</button>
                 </form>
             </section>
 
-            {/* SECCIÓN 2: TABLA DE INVENTARIO ACTUAL */}
             <section style={styles.seccionTabla}>
                 <h2 style={styles.subtitulo}>Inventario Actual</h2>
                 <table style={styles.tabla}>
@@ -159,19 +158,8 @@ function Dashboard() {
                                 <td style={styles.celda}>{p.cantidad}</td>
                                 <td style={styles.celda}>${p.precio}</td>
                                 <td style={styles.celda}>
-                                    {/* Botón Entregar actualizado para pedir cantidad */}
-                                    <button 
-                                        style={styles.botonEntregar} 
-                                        onClick={() => entregarProducto(p.id, p.cantidad, p.nombre)}
-                                    >
-                                        Entregar
-                                    </button>
-                                    <button 
-                                        style={styles.botonEliminar} 
-                                        onClick={() => eliminarProducto(p.id)}
-                                    >
-                                        Eliminar
-                                    </button>
+                                    <button style={styles.botonEntregar} onClick={() => entregarProducto(p.id, p.cantidad, p.nombre)}>Entregar</button>
+                                    <button style={styles.botonEliminar} onClick={() => eliminarProducto(p.id)}>Eliminar</button>
                                 </td>
                             </tr>
                         ))}
@@ -186,6 +174,8 @@ const styles = {
     contenedor: { padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#343a40', color: 'white', padding: '10px 20px', borderRadius: '8px', marginBottom: '20px' },
     titulo: { margin: 0, fontSize: '20px' },
+    contenedorBotones: { display: 'flex', gap: '10px' }, // Alinea botones a la derecha
+    botonHistorial: { backgroundColor: '#17a2b8', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' },
     subtitulo: { borderBottom: '3px solid #007bff', paddingBottom: '5px', color: '#333', marginBottom: '15px' },
     seccionFormulario: { backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', marginBottom: '30px', maxWidth: '500px' },
     formulario: { display: 'flex', flexDirection: 'column', gap: '15px' },
