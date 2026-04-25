@@ -1,20 +1,13 @@
 DATOS DE LA ENTREGA - INVENTARIO SENA
-
 Enlace local: http://localhost/inventario_sena/index.php
-
 Base de Datos: inventario
-
 Tabla: productos
-
 Puerto MySQL: 3306
-
 Instrucciones: Primero encender Apache y MySQL en XAMPP, luego abrir el enlace en el navegador.
 --------------------------------------------------
 EVIDENCIA: GA7-220501096-AA4-EV03
 FECHA: 20 de Abril, 2026
 PROYECTO: Componente Front-end y Back-end (React + Node.js)
---------------------------------------------------
-
 REPOSITORIO GITHUB: 
 https://github.com/hectorbrand/inventario_sena.git
 
@@ -29,3 +22,18 @@ INSTRUCCIONES DE ARRANQUE:
    - Ejecutar: npm install (solo la primera vez)
    - Ejecutar: npm start
 4. Acceso: http://localhost:3000
+--------------------------------------------------
+EVIDENCIA: GA7-220501096-AA5-EV01
+FECHA: 24 de Abril, 2026
+PROYECTO: Diseño y desarrollo de servicios web (API REST - Registro y Login)
+REPOSITORIO GITHUB: https://github.com/hectorbrand/inventario_sena.git
+
+INSTRUCCIONES DE ARRANQUE:
+1.Base de Datos: Verificar existencia de tablas "productos" y "usuarios" en MySQL (Puerto 3306).
+2.Backend: - Abrir terminal en carpeta /backend
+   -Ejecutar: node server.js
+3.Frontend:
+   -Abrir terminal en carpeta /frontend
+   -Ejecutar: npm start
+4.Acceso: http://localhost:3000 (Módulo de autenticación con respuesta satisfactoria).
+----------------------------------------------

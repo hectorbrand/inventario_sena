@@ -1,0 +1,10 @@
+PROYECTO: CONTROL JOB
+LISTADO DE ENDPOINTS:
+
+1. Login: 
+   Método: POST 
+   URL: http://localhost:8081/login
+
+2. Registro: 
+   Método: POST 
+   URL: http://localhost:8081/registro
