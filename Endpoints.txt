@@ -1,10 +1,45 @@
-PROYECTO: CONTROL JOB
-LISTADO DE ENDPOINTS:
+PROYECTO: CONTROL JOB - LISTADO DE ENDPOINTS (API REST)
+1. Prueba de Endpoint: Registro Exitoso (/registro)
 
-1. Login: 
-   Método: POST 
-   URL: http://localhost:8081/login
+Método: POST
 
-2. Registro: 
-   Método: POST 
-   URL: http://localhost:8081/registro
+Descripción: Se valida la creación de un nuevo usuario enviando nuevoUsuario y nuevaClave. El servidor responde con estado 200 OK.
+
+2. Prueba de Endpoint: Login Exitoso (/login)
+
+Método: POST
+
+Descripción: Confirmación de autenticación comparando usuarioIngresado y claveIngresada con la base de datos MySQL.
+
+3. Prueba de Endpoint: Crear Producto (/crear)
+
+Método: POST
+
+Descripción: Inserción de inventario (nombre, cantidad, precio) para expandir el catálogo de forma dinámica.
+
+4. Prueba de Endpoint: Ver Inventario (/productos)
+
+Método: GET
+
+Descripción: Petición para recuperar la lista completa de artículos y validar la estructura del arreglo de objetos.
+
+5. Prueba de Endpoint: Eliminar Producto (/eliminar/:id)
+
+Método: DELETE
+
+Descripción: Borrado de registros específicos mediante parámetro de ruta (ID) para depurar artículos obsoletos.
+
+6. Prueba de Endpoint: Registrar Entrega (/entregar/:id)
+
+Método: PUT
+
+Descripción: Lógica compleja que actualiza stock y genera historial usando cantidadARestar, persona_recibe y area.
+
+7. Prueba de Endpoint: Ver Historial (/historial)
+
+Método: GET
+
+Descripción: Validación de trazabilidad y auditoría verificando que los movimientos se reflejen cronológicamente.
+
+Enlace del Video de Demostración:
+[https://youtu.be/dUidNJ-Q6q4?si=gci18nYnbtD3zLub](https://youtu.be/dUidNJ-Q6q4?si=gci18nYnbtD3zLub)
